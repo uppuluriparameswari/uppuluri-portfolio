@@ -1,26 +1,117 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --color-background: var(--bg-canvas);
+  --color-foreground: var(--text-primary);
+  --color-muted: var(--text-muted);
+  --color-subtle: var(--text-subtle);
+  
+  --color-border: var(--border-line);
+  --color-accent: var(--brand-accent);
+  --color-accent-soft: var(--brand-accent-soft);
+}
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --bg-canvas: #FAFAF9;
+  --text-primary: #111215;
+  --text-muted: #52525B;
+  --text-subtle: #A1A1AA;
+  --border-line: rgba(0, 0, 0, 0.08);
+  --brand-accent: #C28E38;
+  --brand-accent-soft: rgba(194, 142, 56, 0.12);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+.dark {
+  --bg-canvas: #0A0B0E;
+  --text-primary: #F4F4F6;
+  --text-muted: #9496A1;
+  --text-subtle: #5E616E;
+  --border-line: rgba(255, 255, 255, 0.08);
+  --brand-accent: #E5A93C;
+  --brand-accent-soft: rgba(229, 169, 60, 0.15);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--bg-canvas);
+  color: var(--text-primary);
+}
+
+/* Custom Cursor: Hide default arrow only on fine pointer devices */
+@media (pointer: fine) {
+  body,
+  a,
+  button,
+  [role="button"],
+  input,
+  textarea,
+  select,
+  .cursor-pointer {
+    cursor: none !important;
+  }
+}
+
+
+
+
+
+
+
+/* Smooth, premium full-screen theme transition */
+
+::view-transition-group(root) {
+  animation-duration: 2100ms;
+  animation-timing-function: cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+::view-transition-old(root) {
+  animation: none;
+  z-index: 1;
+}
+
+::view-transition-new(root) {
+  animation: none;
+  z-index: 2;
+}
+
+/* Dark -> Light: reveal left to right */
+
+html[data-theme-direction="left-to-right"]::view-transition-new(root) {
+  animation: reveal-left-to-right 1100ms
+    cubic-bezier(0.65, 0, 0.35, 1) both;
+}
+
+/* Light -> Dark: reveal right to left */
+
+html[data-theme-direction="right-to-left"]::view-transition-new(root) {
+  animation: reveal-right-to-left 1100ms
+    cubic-bezier(0.65, 0, 0.35, 1) both;
+}
+
+@keyframes reveal-left-to-right {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+@keyframes reveal-right-to-left {
+  from {
+    clip-path: inset(0 0 0 100%);
+  }
+
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(root),
+  ::view-transition-new(root) {
+    animation-duration: 0.01ms !important;
+  }
 }
